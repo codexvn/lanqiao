@@ -12,3 +12,12 @@ int main()
 			}
 	return 0;
 }
+
+//这样取巧也行 
+//#include<iostream>
+//using namespace std;
+//int main()
+//{
+//	cout<<"153\n370\n371\n407";
+//	return 0;
+//}
