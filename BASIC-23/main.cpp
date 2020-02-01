@@ -2,16 +2,16 @@
 using namespace std;
 int main()
 {
-	int date[2][21]={0},n;
+	int data[2][21]={0},n;
 	cin>>n;
  	for(int i=0;i<n;i++)
 	 	for(int j=0;j<n;j++){
-	 		cin>>date[0][j];
-	 		if(date[0][j]==1)
-			 	date[1][j]++;	 		
+	 		cin>>data[0][j];
+	 		if(data[0][j]==1)
+			 	data[1][j]++;	 		
 	 	}
 	 for(int i=0,count=0;i<n;i++)   
-	 	if(date[1][i]*2>n)
+	 	if(data[1][i]*2>n)
 	 		{	
 	 			cout<<i+1;
 	 			count++;

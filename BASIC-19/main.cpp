@@ -2,19 +2,19 @@
 using namespace std;
 int main()
 {
-	string date;
+	string data;
 	int length,end,count=0;
 	bool flag=false; //判断是不是已经存在单个的字母 
-	cin>>length>>date;
+	cin>>length>>data;
 	end=length-1;
 	for(int i=0;i<end;i++)
 	{
 		int j;
 		for(j=end;j>i;j--){
-			if(date[i]==date[j]){
+			if(data[i]==data[j]){
 				for(int k=j;k<end;k++) //交换相邻数据 
 					{
-						swap(date[k],date[k+1]);
+						swap(data[k],data[k+1]);
 						count++;
 					}
 				break;
