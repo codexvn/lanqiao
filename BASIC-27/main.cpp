@@ -20,10 +20,8 @@ bool FlagCheck(int n,int flag[9][2])
 inline void DFS(int step,int n,int i,int j)
 {
 	if(step>n){
-		if(FlagCheck(n,flag[0])){
 			BlackDFS(1,n,1,1);
 			return;
-		}
 	}
 	 else 
 		for(;i<=n;i++,j=0)
@@ -31,7 +29,8 @@ inline void DFS(int step,int n,int i,int j)
 				if(data[i][j]==1 and book[i][j] != 1){
 					book[i][j]=1;
 					flag[0][step][0]=i; 	
-					flag[0][step][1]=j; 	
+					flag[0][step][1]=j; 
+					if(FlagCheck(step,flag[0]))	
 					DFS(step+1,n,i,j);
 					book[i][j]=0;
 				} else
@@ -41,10 +40,8 @@ inline void DFS(int step,int n,int i,int j)
 inline void BlackDFS(int step,int n,int i,int j)
 {
 	if(step>n){
-		if(FlagCheck(n,flag[1])){
 			count++;
 			return;
-		}
 	}
 	 else 
 		for(;i<=n;i++,j=0)
@@ -52,8 +49,9 @@ inline void BlackDFS(int step,int n,int i,int j)
 				if(data[i][j]==1 and book[i][j] != 1){
 					book[i][j]=1;
 					flag[1][step][0]=i; 	
-					flag[1][step][1]=j; 	
-					BlackDFS(step+1,n,i,j);
+					flag[1][step][1]=j; 
+					if(FlagCheck(step,flag[1]))	
+						BlackDFS(step+1,n,i,j);
 					book[i][j]=0;
 				} else
 					continue;
