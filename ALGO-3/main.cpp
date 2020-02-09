@@ -1,5 +1,4 @@
 #include<iostream>
-#include<vector>
 using namespace std;
 
 int main()
@@ -7,8 +6,9 @@ int main()
 	int bit, length, count = 0; // 10n6只需要用int 
 	cin >> bit >> length;
 	int** dp_data = new int* [length];
-	for (int i = 0; i <= length; i++)
-		dp_data[i] = new int[bit + 1];
+	for (int i = 0; i < length; i++)
+		dp_data[i] = new int[bit + 1]{0};
+		
 	if (length == 1)
 		cout << bit - 1;
 	else {
