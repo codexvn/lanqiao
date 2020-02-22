@@ -1,84 +1,101 @@
-#include<iostream>
-using namespace std;
-int arr[100001];
-int tree[262144];
-inline void BuildTree(int start,int end,int node_flag){
-    if(start==end){
-        tree[node_flag]=arr[start];
-        return;
-    }
-    int mid=(start+end)/2;
-    int left_node=2*node_flag+1;
-    int right_node=2*node_flag+2;
-    BuildTree(start,mid,left_node);
-    BuildTree(mid+1,end,right_node);
-    tree[node_flag]=tree[left_node]+tree[right_node];
-}
-inline void Update(int start,int end,int node_flag,int arr_flag,int arr_value){
-    //cout<<start<<" "<<end<<" "<<node_flag<<" "<<arr_flag<<" "<<arr_value<<endl;
-    if(start==end){
-        arr[arr_flag]=arr_value;
-        tree[node_flag]=arr_value;
-        return;
-    }
-    int mid=(start+end)/2;
-    int left_node=2*node_flag+1;
-    int right_node=2*node_flag+2;
-    if(arr_flag>=start and arr_flag<=mid)
-        Update(start,mid,left_node,arr_flag,arr_value);
-    else
-        Update(mid+1,end,right_node,arr_flag,arr_value);
-    tree[node_flag]=tree[left_node]+tree[right_node];
-}
-inline int QuerySum(int start,int end,int node_flag,int query_start,int query_end){
-   //cout<<start<<" "<<end<<" "<<query_start<<" "<<query_end<<endl;
-    if(query_start<=start and query_end>=end)
-        return tree[node_flag];
-    else if(query_end<start or query_start>end)
-        return 0;
-    else {
-        int mid=(start+end)/2;
-        int left_node=2*node_flag+1;
-        int right_node=2*node_flag+2;
-        int sum=0;
-        if(mid>=query_start)
-            sum+=QuerySum(start,mid,left_node,query_start,query_end);
-        if(mid+1<=query_end)
-            sum+=QuerySum(mid+1,end,right_node,query_start,query_end);
-        return sum;
-    }
-}
-inline void FindMax(int start,int end,int node_flag,int query_start,int query_end,int& max_tmp){
-    //cout<<start<<" "<<end<<" "<<query_start<<" "<<query_end<<" "<<max_tmp<<endl;
-    if(start==end){
-        max_tmp=tree[node_flag]>max_tmp?tree[node_flag]:max_tmp;
-        return;
-    }
-    else if(query_end<start or query_start>end)
-        return;
-    int mid=(start+end)/2;
-    int left_node=2*node_flag+1;
-    int right_node=2*node_flag+2;
-    FindMax(start,mid,left_node,query_start,query_end, max_tmp);
-    FindMax(mid+1,end,right_node,query_start,query_end, max_tmp);
-}
-int main()
-{
-    int n,m;
-    cin>>n>>m;
-    for(int i=0;i<n;i++)
-        cin>>arr[i];
-    BuildTree(0,n-1,0);
-    int p,x,y; //p:2ù×÷ààDí
-    for(int i=0,max_tmp=0;i<m;i++,max_tmp=0){
-        cin>>p>>x>>y;
-        switch(p){
-            case 1 :Update(0,n-1,0,x-1,y);break;
-            case 2 :cout<<QuerySum(0,n-1,0,x-1,y-1)<<endl;break;
-            case 3:FindMax(0,n-1,0,x-1,y-1,max_tmp);
-                cout<<max_tmp<<endl;
-                break;
-        }
-    }
+#include <iostream>
 
+#define max(a, b) a > b ? a : b;
+using namespace std;
+struct node {
+    int l; //范围开始
+    int r;//范围结束
+    int maxvalue;//最大值
+    int sum;//总和
+} a[1000000];
+
+void init(int left, int right, int i) {  //初始化线段树
+    a[i].l = left;
+    a[i].r = right;
+    a[i].maxvalue = 0;
+    a[i].sum = 0;
+    if (left != right) {
+        int mid = (left + right) / 2;
+        init(left, mid, 2 * i);
+        init(mid + 1, right, 2 * i + 1);
+    }
+}
+
+void insert(int i, int j, int value) { //插入数据
+    if (a[i].l == a[i].r) { //如果遍历到了叶子节点就存储数据，此时a[i].l==a[i].r==j
+        a[i].maxvalue = value;
+        a[i].sum = value;
+        return;
+    }
+    int mid = (a[i].l + a[i].r) / 2;
+    if (j <= mid)  //插入的点在左子树的范围还是右子树的范围
+        insert(2 * i, j, value);   //j是不变的，用于保存插入的第几个元素
+    else
+        insert(2 * i + 1, j, value);
+    a[i].maxvalue = max(a[2 * i].maxvalue, a[2 * i + 1].maxvalue);    //直接在节点处保存节点代表范围内最大的数
+    a[i].sum = a[2 * i].sum + a[2 * i + 1].sum;     //保存范围内数的总和
+    //当根节点i从1开始时，左子树在完全2叉树中的下标为2*i,右子树为2*i+1
+    //当根节点i从0开始时，左子树在完全2叉树中的下标为2*i+1,右子树为2*i+2
+}
+
+int find_sum(int i, int x, int y) { //i:当前节点下标   x,y:范围  x-y
+    //static int count = 0;
+    //count++;
+    //cout << a[i].l << " " << a[i].r << " " << x << " " << y << " " << count << endl;
+    if (x == a[i].l && y == a[i].r)   //假如遍历到叶子节点则可以直接返回这个节点的值，因为此时
+        return a[i].sum;
+    else if (a[i].l > y or a[i].r < x)
+        return 0;
+    else if (x <= a[i].l and y >= a[i].r)
+        return a[i].sum;
+    int mid = (a[i].l + a[i].r) / 2, sum = 0;
+    if (mid >= x)
+        sum += find_sum(2 * i, x, y);
+    if (mid + 1 <= y)
+        sum += find_sum(2 * i + 1, x, y);
+    return sum;
+}
+
+int find_max(int i, int x, int y) {
+   // static int count = 0;
+   // count++;
+  //  cout << a[i].l << " " << a[i].r << " " << x << " " << y << " " << count << endl;
+    if (x == a[i].l && y == a[i].r) {
+        return a[i].maxvalue;
+    } else if (a[i].l > y or a[i].r < x)
+        return 0;
+    else if (x <= a[i].l and y >= a[i].r)
+        return a[i].maxvalue;
+    int mid = (a[i].l + a[i].r) / 2, max = 0;
+    if (mid >= x){
+        int max_L=find_max(2 * i , x, y);
+        max=max<max_L?max_L:max;
+    }
+    if (mid + 1 <= y){
+        int max_R=find_max(2 * i+1 , x, y);
+        max=max<max_R?max_R:max;
+    }
+    return max;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    init(1, n, 1);
+    int value;
+    for (int j = 1; j <= n; j++) {
+        cin >> value;
+        insert(1, j, value);
+    }
+    for (int k = 0; k < m; k++) {
+        int p, x, y;
+        cin >> p >> x >> y;
+        if (p == 1)
+            insert(1, x, y);
+        if (p == 2)
+            cout << find_sum(1, x, y) << endl;
+        if (p == 3)
+            cout << find_max(1, x, y) << endl;
+    }
+    return 0;
 }
