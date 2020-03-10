@@ -1,23 +1,25 @@
+#include <algorithm>
 #include <iostream>
-#include<vector>
-#include<algorithm>
 using namespace std;
-bool cmp(vector<int> a,int b){
-	cout<<a.back()<<endl;
-	return a.back()<=b;
-}
+#define N 1000
+int main() {
+  int data[N], bigger[N], smaller[N];
+  int bigger_length = 0,
+      smaller_length = 0; //以bigger[n]结尾的最长递增子序列长度
+                          //，以smaller[n]结尾的最长非递增子序列长度
+  fill(bigger, bigger + N, 1);
+  fill(smaller, smaller + N, 1);
+  for (int i = 0; cin >> data[i]; i++) {
+    for (int j = 0; j <= i; j++)
+      if (data[j] >=
+          data[i]) //找到第一个比data[i]大的数，尝试将data[i]追加到data[j]
+        smaller[i] = max(smaller[i], smaller[j] + 1);
+      else
+        bigger[i] = max(bigger[i], bigger[j] + 1);
+    bigger_length = max(bigger_length, bigger[i]);
+    smaller_length = max(smaller_length, smaller[i]);
+  }
+  cout << smaller_length << endl << bigger_length;
 
-int main(){
-	vector<vector<int> >data(1);
-	int tmp;
-	cin>>tmp;
-	data[0].push_back(tmp);//接收第一个数值 
-	while(cin>>tmp){
-		vector<vector<int> >::iterator i=lower_bound(data.begin(),data.end(),tmp,cmp);
-		if(i==data.end()) //当前值不能用已经使用过的系统拦截则启用一套新的系统 
-			data.push_back(vector<int>(){tmp});
-		else i->push_back(tmp);
-	}
-	cout<<data.size()<<endl<<data.back().back();
-	return 0;
+  return 0;
 }
