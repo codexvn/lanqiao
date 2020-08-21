@@ -27,7 +27,6 @@ int main(){
 				
 				dp[foot][x1][x2]+=max(max(dp[foot-1][x1-1][x2-1],dp[foot-1][x1-1][x2]),max(dp[foot-1][x1][x2-1],dp[foot-1][x1][x2]));
 				  //dp[foot][x1][x2]表示在第foot步时2个人分别走到[x1][foot-x1]和[x2][foot-x2]的值之和 
-				cout<<foot<<" "<<x1 <<" "<<x2<<" "<<dp[foot][x1][x2]<<endl;
 		 	}
 		 }
 	}
